@@ -1,0 +1,27 @@
+{
+    "name": "02_challenge",
+    "version": "1.0.0",
+    "description": "The goal of this exercise is help to understand better what are Chrome DevTools and get familiar with package.json structure.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon index.js"
+    },
+    "keywords": [
+        "Chrome",
+        "DevTools",
+        "package.json"
+    ],
+    "author": "Alondra Cordoba",
+    "license": "ISC",
+    "dependencies": {
+        "body-parser": "^1.19.0",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "mssql": "^6.3.1",
+        "swagger-ui-express": "^4.1.6"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.7"
+    }
+}
