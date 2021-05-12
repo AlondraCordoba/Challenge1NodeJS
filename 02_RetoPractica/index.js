@@ -1,8 +1,9 @@
+import { getUserList, findUserById } from './user';
+
 require('./config');
 const Db = require('./dboperations');
 const State = require('./state');
 const dboperations = require('./dboperations');
-import { getUserList, findUserById } from './user';
 
 const express = require('express');
 const app = express();
@@ -43,13 +44,6 @@ app.get("/users", (req, res) => {
     });
 });
 
-app.get("/", (req, res) => {
-    return res.status(200).send({
-        success: "true",
-        message: "users",
-        users: userList,
-    });
-});
 
 //  POST call - Means you are adding new user into database 
 
