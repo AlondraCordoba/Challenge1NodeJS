@@ -13,6 +13,9 @@ const cors = require('cors');
 
 const PORT = process.env.PORT || 8080;
 
+const jwt = require('jsonwebtoken');
+const configA = require('./configAut');
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -22,7 +25,10 @@ const userList = getUserList(); // assume for now this is your database
 const swaggerUi = require('swagger-ui-express'),
     swaggerDocument = require('./swagger.json');
 
-app.use('/api', router);
+app.use('/', router);
+
+// 1
+app.set('llave', configA.llave);
 
 router.use((req, res, next) => {
     console.log('middleware');
@@ -151,5 +157,60 @@ app.delete("/user/:userId", (req, res) => {
 })
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.listen(3000,()=>{
+    console.log('Servidor iniciado en el puerto 3000') 
+});
+
+app.get('/', function(req, res) {
+    res.send('Inicio');
+});
+
+app.post('/autenticar', (req, res) => {
+    if(req.body.usuario === "asfo" && req.body.contrasena === "holamundo") {
+  const payload = {
+   check:  true
+  };
+  const token = jwt.sign(payload, app.get('llave'), {
+   expiresIn: 1440
+  });
+  res.json({
+   mensaje: 'Autenticación correcta',
+   token: token
+  });
+    } else {
+        res.json({ mensaje: "Usuario o contraseña incorrectos"})
+    }
+})
+
+const rutasProtegidas = express.Router(); 
+rutasProtegidas.use((req, res, next) => {
+    const token = req.headers['access-token'];
+ 
+    if (token) {
+      jwt.verify(token, app.get('llave'), (err, decoded) => {      
+        if (err) {
+          return res.json({ mensaje: 'Token inválida' });    
+        } else {
+          req.decoded = decoded;    
+          next();
+        }
+      });
+    } else {
+      res.send({ 
+          mensaje: 'Token no proveída.' 
+      });
+    }
+ });
+
+ app.get('/datos', rutasProtegidas, (req, res) => {
+    const datos = [
+     { id: 1, nombre: "Alondra" },
+     { id: 2, nombre: "Eduardo" },
+     { id: 3, nombre: "Rodrigo" }
+    ];
+    
+    res.json(datos);
+   });
 
 app.listen(PORT, () => console.log(`It's running on https://localhost:${PORT}`));
